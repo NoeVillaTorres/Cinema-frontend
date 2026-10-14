@@ -2,8 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { getMovies } from "../services/movies";
 import { MovieCard } from "../components/MovieCard";
 
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Hero } from "../components/Hero";
+import { CatalogFilters } from "../components/CatalogFilters";
 
 
 const categories = [
@@ -13,24 +14,42 @@ const categories = [
   ];
 
 export const Home = () => {
+  const [searchParams] = useSearchParams();
+
+  const filters = {
+    search: searchParams.get("search") || "",
+    type: searchParams.get("type") || "",
+    genre: searchParams.get("genre") || "",
+  };
+
   const {
     data: movies = [],
     isPending,
     isError,
     error,
   } = useQuery({
-    queryKey: ["movies"],
-    queryFn: getMovies,
+    queryKey: ["movies", filters.search, filters.type, filters.genre],
+    queryFn: () => getMovies(filters),
   });
 
-  if (isPending) return <p className="p-10">Cargando catálogo...</p>;
-  if (isError) return <p className="p-10">Error: {error.message}</p>;
 
+  const {
+    data: featuredMovies = [],
+  } = useQuery({
+    queryKey: ["featured", "Interstellar"],
+    queryFn: () => getMovies({ search: "Interstellar" }),
+  });
   
+  const featuredMovie = featuredMovies.find(
+    (movie) => movie.name === "Interstellar"
+  );
+
+
   return (
     <>
-      <Hero movie={movies[0]} />
+      <Hero movie={featuredMovie} />
 
+      {/* Accesos rápidos */}
       <div className="relative z-10 mx-auto -mt-10 grid max-w-7xl gap-4 px-6 md:grid-cols-3">
         {categories.map(({ title, description, to }) => (
           <Link
@@ -38,13 +57,22 @@ export const Home = () => {
             to={to}
             className="rounded-xl border border-white/10 bg-surface-light p-6 shadow-xl transition hover:-translate-y-1 hover:border-accent/50"
           >
-            <h2 className="text-xl font-semibold text-accent">{title}</h2>
-            <p className="mt-2 text-sm text-gray-400">{description}</p>
+            <h2 className="text-xl font-semibold text-accent">
+              {title}
+            </h2>
+
+            <p className="mt-2 text-sm text-gray-400">
+              {description}
+            </p>
           </Link>
         ))}
       </div>
 
-      <section id="catalogo" className="mx-auto max-w-7xl px-6 py-20">
+      {/* Catálogo */}
+      <section
+        id="catalogo"
+        className="mx-auto max-w-7xl px-6 py-20"
+      >
         <div className="mb-8">
           <span className="text-sm font-medium text-accent">
             DESCUBRE
@@ -55,10 +83,33 @@ export const Home = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
-          ))}
+        <CatalogFilters />
+
+        {/* Resultados */}
+        <div className="mt-8">
+          {isPending ? (
+            <p className="text-muted">Cargando catálogo...</p>
+          ) : isError ? (
+            <p className="text-red-400">
+              Error: {error.message}
+            </p>
+          ) : movies.length === 0 ? (
+            <p className="py-12 text-center text-muted">
+              No encontramos títulos con esos filtros.
+            </p>
+          ) : (
+            <>
+              <p className="mb-5 text-sm text-muted">
+                {movies.length} resultados encontrados
+              </p>
+
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {movies.map((movie) => (
+                  <MovieCard key={movie.id} movie={movie} />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </section>
     </>
