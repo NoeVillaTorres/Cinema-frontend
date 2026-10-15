@@ -6,5 +6,5 @@ export const Footer = () => {
           <p>Proyecto de desarrollo full-stack · React + FastAPI</p>
         </div>
       </footer>
-    );
+    )
   }

@@ -12,15 +12,18 @@ export const adminRequest = async(path, token, options = {}) => {
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-
+  
     const message =
       typeof error.detail === "string"
         ? error.detail
         : `Error en la solicitud (${response.status})`;
-
-    throw new Error(message);
+  
+    const requestError = new Error(message);
+    requestError.status = response.status;
+  
+    throw requestError;
   }
-
+  
   if (response.status === 204) return null;
 
   return response.json();

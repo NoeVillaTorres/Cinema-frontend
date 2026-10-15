@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getMovies } from "../../services/movies";
 import { MovieCard } from "../../components/MovieCard";
@@ -5,6 +7,7 @@ import { MovieCard } from "../../components/MovieCard";
 import { Link, useSearchParams } from "react-router-dom";
 import { Hero } from "../../components/Hero";
 import { CatalogFilters } from "../../components/CatalogFilters";
+import { ExploreSections } from "../../components/ExploreSections";
 
 
 const categories = [
@@ -43,6 +46,16 @@ export const Home = () => {
   const featuredMovie = featuredMovies.find(
     (movie) => movie.name === "Interstellar"
   );
+
+  const { hash } = useLocation();
+
+  useEffect(() => {
+    if (hash === "#catalogo") {
+      document.getElementById("catalogo")?.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  }, [hash]);
 
 
   return (
@@ -112,6 +125,8 @@ export const Home = () => {
           )}
         </div>
       </section>
+
+      <ExploreSections />
     </>
   );
 }

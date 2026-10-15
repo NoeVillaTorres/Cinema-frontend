@@ -28,3 +28,17 @@ export const getGenres = async() => {
 
   return response.json();
 }
+
+export const getMovieById = async(id) => {
+  const response = await fetch(`${API_URL}/titles/${id}`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error("El título no existe");
+    }
+
+    throw new Error("No se pudo cargar la información del título");
+  }
+
+  return response.json();
+}
