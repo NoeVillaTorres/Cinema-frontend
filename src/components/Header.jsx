@@ -38,7 +38,7 @@ export const Header = () => {
           <Clapperboard className="text-accent" size={26} />
 
           <span className="text-xl font-bold tracking-wide">
-            CINEMA
+            CINEMATRIX
           </span>
         </Link>
 

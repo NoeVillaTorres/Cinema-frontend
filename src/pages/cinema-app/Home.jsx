@@ -33,6 +33,8 @@ export const Home = () => {
   } = useQuery({
     queryKey: ["movies", filters.search, filters.type, filters.genre],
     queryFn: () => getMovies(filters),
+    refetchInterval: (query) =>
+      query.state.status === "error" ? 5000 : false,
   });
 
 
@@ -41,13 +43,16 @@ export const Home = () => {
   } = useQuery({
     queryKey: ["featured", "Interstellar"],
     queryFn: () => getMovies({ search: "Interstellar" }),
+
+    refetchInterval: (query) =>
+      query.state.status === "error" ? 5000 : false,
   });
   
   const featuredMovie = featuredMovies.find(
     (movie) => movie.name === "Interstellar"
   );
 
-  const { hash } = useLocation();
+  const { hash, search } = useLocation();
 
   useEffect(() => {
     if (hash === "#catalogo") {
@@ -55,7 +60,7 @@ export const Home = () => {
         behavior: "smooth",
       });
     }
-  }, [hash]);
+  }, [hash, search]);
 
 
   return (

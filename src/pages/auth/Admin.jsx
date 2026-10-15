@@ -68,11 +68,11 @@ export const Admin = () => {
   const refreshCatalog = () => {
     queryClient.invalidateQueries({ queryKey: ["movies"] });
     queryClient.invalidateQueries({ queryKey: ["featured"] });
-
+    queryClient.invalidateQueries({ queryKey: ["movie"] });
+  
     setFormOpen(false);
     setEditingTitle(null);
-
-  }
+  };
 
   const createMutation = useMutation({
     mutationFn: (data) => createTitle(data, token),
@@ -203,7 +203,7 @@ export const Admin = () => {
               ref={formRef}
               className="mb-8 rounded-xl border border-white/10 bg-surface p-6"
             >
-            
+
               <TitleForm
                 key={editingTitle?.id ?? "new"}
                 title={editingTitle}

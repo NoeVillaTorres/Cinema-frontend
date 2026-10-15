@@ -1,5 +1,5 @@
 export const Hero = ({ movie }) => {
-    if (!movie) return null;
+    
   
     return (
       <section className="relative overflow-hidden bg-surface">
@@ -21,11 +21,11 @@ export const Hero = ({ movie }) => {
             </span>
   
             <h1 className="mb-5 text-4xl font-bold tracking-tight sm:text-6xl">
-              {movie.name}
+              {movie?.name || "Series y peliculas..."}
             </h1>
   
             <p className="mb-6 line-clamp-3 text-lg leading-relaxed text-gray-300">
-              {movie.synopsis}
+            {movie?.synopsis || "Explora nuestro catálogo de películas y series."}
             </p>
   
             <a

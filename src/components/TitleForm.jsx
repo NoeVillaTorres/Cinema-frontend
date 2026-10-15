@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {toast} from "sonner"
 
 const getInitialValues = (title, genres) => {
   return {
@@ -48,14 +49,23 @@ export const TitleForm = ({
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    const name = form.name.trim();
+    const synopsis = form.synopsis.trim();
+
+    if (!name || !synopsis) {
+      toast.error("El nombre y la sinopsis no pueden estar vacíos");
+      return;
+    }
+
     if (form.genre_ids.length === 0) {
+      toast.error("Selecciona al menos un género");
       return;
     }
 
     onSubmit({
       ...form,
-      name: form.name.trim(),
-      synopsis: form.synopsis.trim(),
+      name,
+      synopsis,
       release_year: Number(form.release_year),
       poster_url: form.poster_url.trim() || null,
     });
@@ -76,7 +86,7 @@ export const TitleForm = ({
           name="name"
           value={form.name}
           onChange={updateField}
-          maxLength={200}
+          maxLength={100}
           required
           className={inputClass}
         />

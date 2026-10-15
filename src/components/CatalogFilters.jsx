@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Search, RotateCcw } from "lucide-react";
 
 import { getGenres } from "../services/movies";
+import { toast } from "sonner";
 
 export const CatalogFilters = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -21,12 +22,19 @@ export const CatalogFilters = () => {
   const type = searchParams.get("type") || "";
   const genre = searchParams.get("genre") || "";
 
-  const { data: genres = [] } = useQuery({
+  const {
+    data: genres = [],
+    isPending: genresLoading,
+    isError: genresError,
+    refetch: refetchGenres,
+  } = useQuery({
     queryKey: ["genres"],
     queryFn: getGenres,
+    refetchInterval: (query) =>
+      query.state.status === "error" ? 5000 : false,
   });
 
-  function updateFilter(key, value) {
+  const updateFilter = (key, value) => {
     const params = new URLSearchParams(searchParams);
 
     if (value) {
@@ -38,7 +46,7 @@ export const CatalogFilters = () => {
     setSearchParams(params);
   }
 
-  function handleSearch(event) {
+  const handleSearch = (event) => {
     event.preventDefault();
     updateFilter("search", search.trim());
   }
@@ -55,7 +63,7 @@ export const CatalogFilters = () => {
         className="grid gap-4 md:grid-cols-[2fr_1fr_1fr_auto]"
       >
         {/* Búsqueda */}
-        <div className="flex overflow-hidden rounded-lg border border-white/10 bg-background">
+        <div className="flex overflow-hidden rounded-lg border border-white/10 bg-background focus-within:border-accent focus-within:ring-1 focus-within:ring-accent">
           <input
             type="search"
             value={search}
@@ -92,12 +100,17 @@ export const CatalogFilters = () => {
         <select
           aria-label="Filtrar por género"
           value={genre}
-          onChange={(event) =>
-            updateFilter("genre", event.target.value)
-          }
-          className="rounded-lg border border-white/10 bg-background px-4 py-3 text-sm text-white"
+          onChange={(event) => updateFilter("genre", event.target.value)}
+          disabled={genresLoading || genresError}
+          className="w-full rounded-lg border border-white/10 bg-background px-4 py-3 text-sm text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <option value="">Todos los géneros</option>
+          <option value="">
+            {genresLoading
+              ? "Cargando géneros..."
+              : genresError
+                ? "Géneros no disponibles"
+                : "Todos los géneros"}
+          </option>
 
           {genres.map((item) => (
             <option key={item.id} value={item.name}>
@@ -105,6 +118,28 @@ export const CatalogFilters = () => {
             </option>
           ))}
         </select>
+
+        {genresError && (
+          <div className="text-sm text-red-400 md:col-span-full">
+            No se pudieron cargar los géneros.{" "}
+            <button
+              type="button"
+              onClick={async () => {
+                const result = await refetchGenres();
+
+                if (result.isSuccess) {
+                  toast.success("Géneros cargados correctamente");
+                } else {
+                  toast.error("No se pudieron cargar los géneros");
+                }
+              }}
+              className="font-medium text-accent hover:underline"
+            >
+              Reintentar
+            </button>
+          </div>
+        )}
+
 
         {/* Limpiar filtros */}
         <button
