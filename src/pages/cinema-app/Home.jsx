@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMovies } from "../services/movies";
-import { MovieCard } from "../components/MovieCard";
+import { getMovies } from "../../services/movies";
+import { MovieCard } from "../../components/MovieCard";
 
 import { Link, useSearchParams } from "react-router-dom";
-import { Hero } from "../components/Hero";
-import { CatalogFilters } from "../components/CatalogFilters";
+import { Hero } from "../../components/Hero";
+import { CatalogFilters } from "../../components/CatalogFilters";
 
 
 const categories = [
