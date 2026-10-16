@@ -33,7 +33,7 @@ export const ExploreSections = () => {
           </span>
 
           <h2 className="mt-4 max-w-xl text-3xl font-bold leading-tight text-white sm:text-4xl">
-            Cada historia comienza con un descubrimiento.
+            Cada pelicula o serie que ves puede integrar algo en ti.
           </h2>
 
           <p className="mt-5 max-w-lg leading-7 text-muted">

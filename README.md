@@ -129,7 +129,7 @@ Crear un archivo `.env` en la raíz del proyecto:
 VITE_API_URL=http://localhost:8000
 ```
 
-Si no se configura esta variable, los servicios utilizan `http://localhost:8000` como dirección predeterminada.
+
 
 **Importante:** las variables de Vite que comienzan por `VITE_` pueden incluirse en el código enviado al navegador. No deben utilizarse para almacenar contraseñas, claves JWT u otros secretos.
 
